@@ -61,6 +61,7 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        height: '100vh',
     },
     formContainer: {
         width: '100%',
@@ -71,7 +72,7 @@ const styles = {
         alignItems: 'center',
     },
     form: {
-        width: '100%',
+        /*width: '100%',*/
         display: 'flex',
         flexDirection: 'column',
     },
