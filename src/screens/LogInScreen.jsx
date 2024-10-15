@@ -1,8 +1,7 @@
 import {useState} from 'react';
 import logIn from "../handlers/logIn.js";
-import ApiError from "../errors/ApiError.js";
 
-export default function SignIn() {
+export default function LogInScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -14,7 +13,7 @@ export default function SignIn() {
             setError('Both fields are required.');
         } else {
             setError('');
-            console.log('Signing in with', {email, password});
+            console.log('Logging in with', {email, password});
             try {
                 await logIn(email, password);
             } catch (error) {
@@ -25,7 +24,7 @@ export default function SignIn() {
 
     return (
         <div style={styles.container}>
-            <h2>Sign In</h2>
+            <h2>Login</h2>
             <form onSubmit={handleSignIn} style={styles.form}>
                 <div style={styles.inputContainer}>
                     <label>Email</label>
