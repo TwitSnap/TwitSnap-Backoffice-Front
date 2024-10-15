@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import logIn from "../handlers/logIn.js";
+import "../App.css"
 
 export default function LogInScreen() {
     const [email, setEmail] = useState('');
@@ -24,7 +25,7 @@ export default function LogInScreen() {
 
     return (
         <div style={styles.container}>
-            <h2>Login</h2>
+            <img src="/logo.png" className="logo"/>
             <form onSubmit={handleSignIn} style={styles.form}>
                 <div style={styles.inputContainer}>
                     <label>Email</label>
@@ -63,21 +64,14 @@ const styles = {
         justifyContent: 'center',
         height: '100vh',
     },
-    formContainer: {
-        width: '100%',
-        maxWidth: '400px',
-        padding: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
     form: {
         /*width: '100%',*/
         display: 'flex',
         flexDirection: 'column',
+        padding: '10px',
     },
     inputContainer: {
-        marginBottom: '15px'
+        marginBottom: '20px',
     },
     input: {
         width: '100%',
