@@ -20,14 +20,15 @@ export default async function logIn(email, password) {
         const responseData = await response.json();
 
         if (response.ok) {
+            console.log("Successfully logged in");
             const token = responseData.token;
             if (token) {
                 localStorage.setItem('token', token);
+                console.log("   token saved: ", token);
             }
-            console.log("Successfully logged in");
-            console.log("   token saved: ", token);
         } else if (response.status === 400) {
-            throw new ApiError(response.status, responseData.error);
+            const message = responseData.error || "Unspecified error message.";
+            throw new ApiError(response.status, message);
         } else {
             throw new ApiError(response.status, "Unknown API error");
         }

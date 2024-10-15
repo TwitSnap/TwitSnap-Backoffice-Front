@@ -7,7 +7,7 @@ export default function LogInScreen() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSignIn = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         // You can add form validation or API call logic here
         if (!email || !password) {
@@ -26,7 +26,7 @@ export default function LogInScreen() {
     return (
         <div style={styles.container}>
             <img src="/logo.png" className="logo"/>
-            <form onSubmit={handleSignIn} style={styles.form}>
+            <form onSubmit={handleSubmit} style={styles.form}>
                 <div style={styles.inputContainer}>
                     <label>Email</label>
                     <input
