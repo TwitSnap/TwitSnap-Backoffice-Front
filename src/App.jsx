@@ -7,6 +7,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<LogInScreen />} />
+                <Route path="/login" element={<LogInScreen />} />
                 <Route path="/register" element={<RegisterScreen />} />
                 <Route path="*" element={<h1>Not Found</h1>} />
             </Routes>

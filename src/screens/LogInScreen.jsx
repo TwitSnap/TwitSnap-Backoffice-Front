@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {Link} from "react-router-dom";
 import logIn from "../handlers/logIn.js";
 import "../App.css"
 
@@ -49,9 +50,12 @@ export default function LogInScreen() {
                 </div>
                 {error && <p style={styles.errorText}>{error}</p>}
                 <button type="submit" style={styles.button}>
-                    Sign In
+                    Login
                 </button>
             </form>
+            <Link to="/register" style={styles.link}>
+                Register Account
+            </Link>
         </div>
     );
 }
@@ -78,4 +82,9 @@ const styles = {
     },
     button: {},
     errorText: {},
+    link: {
+        textDecoration: 'none',
+        color: 'white',
+        marginTop: '20px',
+    },
 };

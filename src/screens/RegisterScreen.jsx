@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {Link} from "react-router-dom";
 import register from "../handlers/register.js";
 
 export default function RegisterScreen() {
@@ -68,6 +69,9 @@ export default function RegisterScreen() {
                     Register
                 </button>
             </form>
+            <Link to="/login" style={styles.link}>
+                Login
+            </Link>
         </div>
     );
 }
@@ -94,4 +98,9 @@ const styles = {
     },
     button: {},
     errorText: {},
+    link: {
+        textDecoration: 'none',
+        color: 'white',
+        marginTop: '20px',
+    },
 };
