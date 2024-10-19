@@ -7,6 +7,7 @@ export default function UserListScreen() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
+    const [expandedUser, setExpandedUser] = useState(null);
 
     useEffect(() => {
         fetchUsers(currentPage);
@@ -43,6 +44,10 @@ export default function UserListScreen() {
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const toggleUserDetails = (userId) => {
+        setExpandedUser(prevState => prevState === userId ? null : userId);
+    };
+
     return (
         <div style={styles.container}>
             <h2>Users</h2>
@@ -61,23 +66,33 @@ export default function UserListScreen() {
                     <ul style={styles.userList}>
                         {filteredUsers.map(user => (
                             <li key={user.id} style={styles.userItem}>
-                                <img src={user.avatar} alt={user.first_name} style={styles.avatar}/>
-                                <div style={{flexGrow: 1}}>
-                                    <p>{user.email}</p>
-                                </div>
-                                <div style={styles.actions}>
-                                    <button
-                                        style={styles.detailButton}
-                                        onClick={() => {console.log(user.first_name, user.last_name)}}
-                                    >
-                                        Details
-                                    </button>
-                                    <button
-                                        style={styles.banButton}
-                                        onClick={() => {console.log("Banned user id: ", user.id)}}
-                                    >
-                                        Ban
-                                    </button>
+                                <div style={styles.userContainer}>
+                                    <div style={styles.userInfo}>
+                                        <img src={user.avatar} style={styles.avatar}/>
+                                        <div style={{flexGrow: 1}}>
+                                            <p>{user.email}</p>
+                                        </div>
+                                        <div style={styles.actions}>
+                                            <button
+                                                style={styles.detailButton}
+                                                onClick={() => toggleUserDetails(user.id)}
+                                            >
+                                                {expandedUser === user.id ? 'Hide Details' : 'Show Details'}
+                                            </button>
+                                            <button
+                                                style={styles.banButton}
+                                                onClick={() => {console.log("Banned user id: ", user.id)}}
+                                            >
+                                                Ban
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {expandedUser === user.id && (
+                                        <div style={styles.details}>
+                                            <p><strong>Name: </strong> {user.first_name} {user.last_name}</p>
+                                            <p><strong>Country: </strong> Argentina</p>
+                                        </div>
+                                    )}
                                 </div>
                             </li>
                         ))}
@@ -129,6 +144,16 @@ const styles = {
         padding: '10px',
         borderRadius: '5px',
     },
+    userContainer: {
+        width: '100%',
+    },
+    userInfo: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px',
+        width: '100%',
+    },
     avatar: {
         width: '50px',
         height: '50px',
@@ -138,6 +163,7 @@ const styles = {
     actions: {
         display: 'flex',
         gap: '10px',
+        paddingRight: '15px',
     },
     detailButton: {
         padding: '5px 10px',
@@ -152,6 +178,10 @@ const styles = {
         border: 'none',
         borderRadius: '5px',
         cursor: 'pointer',
+    },
+    details: {
+        marginTop: '10px',
+        paddingLeft: '10px',
     },
     pagination: {
         marginTop: '20px',
