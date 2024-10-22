@@ -1,6 +1,6 @@
 import ApiError from "../errors/ApiError.js";
 
-export default async function register(email, password) {
+export default async function register(email, password, token) {
     try {
         const headers = {
             'Content-Type': 'application/json',
@@ -9,9 +9,10 @@ export default async function register(email, password) {
         const requestBody = {
             email: email,
             password: password,
+            token: token,
         };
 
-        const response = await fetch('https://reqres.in/api/register', {
+        const response = await fetch('https://twitsnap-backoffice-gateway.onrender.com/v1/auth/register', {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(requestBody),
@@ -21,16 +22,12 @@ export default async function register(email, password) {
 
         if (response.ok) {
             console.log("Successfully registered");
-            const token = responseData.token;
-            if (token) {
-                localStorage.setItem('token', token);
-                console.log("   token saved: ", token);
-            }
-        } else if (response.status === 400) {
-            const message = responseData.error || "Unspecified error message.";
+        } else if (response.status >= 400 && response.status < 500) {
+            const message = responseData.title || "Unspecified error message.";
             throw new ApiError(response.status, message);
         } else {
-            throw new ApiError(response.status, "Unknown API error");
+            const message = responseData.title || "Unspecified API error.";
+            throw new ApiError(response.status, message);
         }
     } catch(error) {
         if (error instanceof ApiError) {

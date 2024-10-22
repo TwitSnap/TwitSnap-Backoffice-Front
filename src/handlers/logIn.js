@@ -11,7 +11,7 @@ export default async function logIn(email, password) {
             password: password,
         };
 
-        const response = await fetch('https://reqres.in/api/login', {
+        const response = await fetch('https://twitsnap-backoffice-gateway.onrender.com/v1/auth/login', {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(requestBody),
@@ -26,11 +26,12 @@ export default async function logIn(email, password) {
                 localStorage.setItem('token', token);
                 console.log("   token saved: ", token);
             }
-        } else if (response.status === 400) {
-            const message = responseData.error || "Unspecified error message.";
+        } else if (response.status >= 400 && response.status < 500) {
+            const message = responseData.title || "Unspecified error message.";
             throw new ApiError(response.status, message);
         } else {
-            throw new ApiError(response.status, "Unknown API error");
+            const message = responseData.title || "Unknown API error.";
+            throw new ApiError(response.status, message);
         }
     } catch(error) {
         if (error instanceof ApiError) {
