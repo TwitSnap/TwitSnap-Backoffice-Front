@@ -7,6 +7,7 @@ export default function LogInScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -15,11 +16,14 @@ export default function LogInScreen() {
             setError('Both fields are required.');
         } else {
             setError('');
+            setLoading(true)
             console.log('Logging in with', {email, password});
             try {
                 await logIn(email, password);
             } catch (error) {
                 setError(error.message);
+            } finally {
+                setLoading(false);
             }
         }
     };
@@ -49,7 +53,7 @@ export default function LogInScreen() {
                     />
                 </div>
                 {error && <p style={styles.errorText}>{error}</p>}
-                <button type="submit" style={styles.button}>
+                <button disabled={loading} type="submit" style={styles.button}>
                     Login
                 </button>
             </form>
