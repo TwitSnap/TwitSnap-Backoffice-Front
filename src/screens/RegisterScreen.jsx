@@ -4,15 +4,16 @@ import register from "../handlers/register.js";
 
 export default function RegisterScreen() {
     const [email, setEmail] = useState('');
-    const [pin, setPin] = useState('');
+    const [token, setToken] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!email || !pin || !password || !confirmPassword) {
+        if (!email || !token || !password || !confirmPassword) {
             setError('All fields are required.');
             return;
         }
@@ -23,11 +24,14 @@ export default function RegisterScreen() {
         }
 
         setError('');
-        console.log('Registering with', {email, password, pin});
+        setLoading(true);
+        console.log('Registering with', {email, password, token});
         try {
-            await register(email, password, pin);
+            await register(email, password, token);
         } catch (error) {
             setError(error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -48,8 +52,8 @@ export default function RegisterScreen() {
                 <div style={styles.inputContainer}>
                     <label>PIN</label>
                     <input
-                        value={pin}
-                        onChange={(e) => setPin(e.target.value)}
+                        value={token}
+                        onChange={(e) => setToken(e.target.value)}
                         style={styles.input}
                         required
                     />
@@ -75,7 +79,7 @@ export default function RegisterScreen() {
                     />
                 </div>
                 {error && <p style={styles.errorText}>{error}</p>}
-                <button type="submit" style={styles.button}>
+                <button disabled={loading} type="submit" style={styles.button}>
                     Register
                 </button>
             </form>
@@ -107,7 +111,9 @@ const styles = {
         width: '100%',
     },
     button: {},
-    errorText: {},
+    errorText: {
+        color: 'red',
+    },
     link: {
         textDecoration: 'none',
         color: 'white',
