@@ -22,15 +22,15 @@ export default async function invite(email) {
             headers: headers,
             body: JSON.stringify(requestBody),
         });
-
-        const responseData = await response.json();
-
+        
         if (response.ok) {
             console.log("Invitation sent");
         } else if (response.status >= 400 && response.status < 500) {
+            const responseData = await response.json();
             const message = responseData.title || "Unspecified error message.";
             throw new ApiError(response.status, message);
         } else {
+            const responseData = await response.json();
             const message = responseData.title || "Unspecified API error.";
             throw new ApiError(response.status, message);
         }
