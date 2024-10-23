@@ -30,8 +30,8 @@ export default function RegisterScreen() {
         try {
             await register(email, password, token);
             navigate('/login')
-        } catch (error) {
-            setError(error.message);
+        } catch (err) {
+            setError(err.message);
         } finally {
             setLoading(false);
         }
@@ -52,7 +52,7 @@ export default function RegisterScreen() {
                     />
                 </div>
                 <div style={styles.inputContainer}>
-                    <label>PIN</label>
+                    <label>Token</label>
                     <input
                         value={token}
                         onChange={(e) => setToken(e.target.value)}
@@ -101,7 +101,6 @@ const styles = {
         height: '100vh',
     },
     form: {
-        /*width: '100%',*/
         display: 'flex',
         flexDirection: 'column',
         padding: '10px',

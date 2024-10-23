@@ -22,8 +22,8 @@ export default function LogInScreen() {
             try {
                 await logIn(email, password);
                 navigate('/dashboard');
-            } catch (error) {
-                setError(error.message);
+            } catch (err) {
+                setError(err.message);
             } finally {
                 setLoading(false);
             }
@@ -87,7 +87,9 @@ const styles = {
         width: '100%',
     },
     button: {},
-    errorText: {},
+    errorText: {
+        color: 'red',
+    },
     link: {
         textDecoration: 'none',
         color: 'white',
