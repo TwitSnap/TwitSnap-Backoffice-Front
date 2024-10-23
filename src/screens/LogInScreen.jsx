@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import logIn from "../handlers/logIn.js";
 import "../App.css"
 
@@ -8,6 +8,7 @@ export default function LogInScreen() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -20,6 +21,7 @@ export default function LogInScreen() {
             console.log('Logging in with', {email, password});
             try {
                 await logIn(email, password);
+                navigate('/dashboard');
             } catch (error) {
                 setError(error.message);
             } finally {
