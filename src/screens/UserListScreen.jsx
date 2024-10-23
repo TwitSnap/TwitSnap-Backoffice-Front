@@ -1,4 +1,5 @@
 import {useState, useEffect} from "react";
+import {Link} from "react-router-dom";
 
 export default function UserListScreen() {
     const [users, setUsers] = useState([]);
@@ -50,6 +51,9 @@ export default function UserListScreen() {
 
     return (
         <div style={styles.container}>
+            <Link to="/dashboard">
+                <button style={styles.dashboard}>Dashboard</button>
+            </Link>
             <h2>Users</h2>
             <input
                 type="text"
@@ -123,12 +127,15 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh',
+    },
+    dashboard: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
     },
     errorText: {},
     searchBox: {
         padding: '10px',
-        /*width: '100%',*/
         marginBottom: '20px',
         fontSize: '16px',
     },

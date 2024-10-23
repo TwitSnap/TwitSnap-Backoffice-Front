@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import register from "../handlers/register.js";
 
 export default function RegisterScreen() {
@@ -9,6 +9,7 @@ export default function RegisterScreen() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -28,6 +29,7 @@ export default function RegisterScreen() {
         console.log('Registering with', {email, password, token});
         try {
             await register(email, password, token);
+            navigate('/login')
         } catch (error) {
             setError(error.message);
         } finally {
