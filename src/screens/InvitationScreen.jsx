@@ -1,16 +1,18 @@
 import {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import invite from "../handlers/invite.js";
 
 
 export default function InvitationScreen() {
     const [email, setEmail] = useState('');
+    const [confirmation, setConfirmation] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        setConfirmation('');
 
         if (!email) {
             setError('All fields are required.');
@@ -21,7 +23,7 @@ export default function InvitationScreen() {
         setLoading(true)
         try {
             await invite(email);
-            navigate('/login');
+            setConfirmation('Invitation sent.');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -50,6 +52,7 @@ export default function InvitationScreen() {
                 <button disabled={loading} type="submit">
                     Submit
                 </button>
+                {confirmation && <p>{confirmation}</p>}
             </form>
         </div>
     );
