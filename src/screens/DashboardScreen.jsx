@@ -17,6 +17,9 @@ export default function DashboardScreen() {
                 <Link to="/users">
                     <button style={styles.button}>Users</button>
                 </Link>
+                <Link to="/invite">
+                    <button style={styles.button}>Invite</button>
+                </Link>
             </div>
         </div>
     );
@@ -37,5 +40,8 @@ const styles = {
     links: {
         marginTop: '200px',
     },
-    button: {},
+    button: {
+        marginLeft: '10px',
+        marginRight: '10px',
+    },
 };
