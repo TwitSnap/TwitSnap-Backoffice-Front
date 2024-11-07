@@ -4,6 +4,7 @@ import RegisterScreen from "./screens/RegisterScreen.jsx";
 import UserListScreen from "./screens/UserListScreen.jsx";
 import DashboardScreen from "./screens/DashboardScreen.jsx";
 import InvitationScreen from "./screens/InvitationScreen.jsx";
+import SnapListScreen from "./screens/SnapListScreen.jsx";
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/login" element={<LogInScreen />} />
                 <Route path="/register" element={<RegisterScreen />} />
                 <Route path="/users" element={<UserListScreen />} />
+                <Route path="/snaps" element={<SnapListScreen />} />
                 <Route path="/invite" element={<InvitationScreen />} />
                 <Route path="*" element={<h1>Not Found</h1>} />
             </Routes>
