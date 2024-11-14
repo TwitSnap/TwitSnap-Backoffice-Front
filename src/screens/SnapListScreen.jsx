@@ -6,18 +6,33 @@ export default function SnapListScreen() {
     const [snaps, setSnaps] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [expandedSnap, setExpandedSnap] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            const res = await getSnaps();
-            setSnaps(res.posts);
-            setLoading(false);
-        }
-
         fetchData();
     }, [])
+
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const res = await getSnaps();
+            setError('');
+            setSnaps(res.posts);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const filteredSnaps = snaps.filter((snap) =>
+        snap.username_creator.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value.toLowerCase());
+    }
 
     const toggleSnapDetails = (snapId) => {
         setExpandedSnap(prevState => prevState === snapId ? null : snapId);
@@ -29,13 +44,20 @@ export default function SnapListScreen() {
                 <button style={styles.dashboard}>Dashboard</button>
             </Link>
             <h2>Snaps</h2>
+            <input
+                type="text"
+                placeholder="Search by User"
+                value={searchTerm}
+                onChange={handleSearch}
+                style={styles.searchBox}
+            />
             {error && <p style={styles.errorText}>{error}</p>}
             {loading ? (
                 <p>Loading...</p>
             ) : (
                 <div>
                     <ul style={styles.snapList}>
-                        {snaps.map(snap => (
+                        {filteredSnaps.map(snap => (
                             <li key={snap.post_id} style={styles.snapItem}>
                                 <div style={styles.snapContainer}>
                                     <div style={styles.snapInfo}>

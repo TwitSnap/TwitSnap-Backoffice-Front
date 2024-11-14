@@ -7,7 +7,6 @@ export default function UserListScreen() {
     const [error, setError] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [searchTerm, setSearchTerm] = useState('');
     const [expandedUser, setExpandedUser] = useState(null);
 
     useEffect(() => {
@@ -31,19 +30,11 @@ export default function UserListScreen() {
             setError('');
             setUsers(responseData.data);
             setTotalPages(responseData.total_pages);
-        } catch (error) {
-            setError(error.message);
+        } catch (err) {
+            setError(err.message);
         }
         setLoading(false);
     };
-
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value.toLowerCase());
-    }
-
-    const filteredUsers = users.filter((user) =>
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     const toggleUserDetails = (userId) => {
         setExpandedUser(prevState => prevState === userId ? null : userId);
@@ -55,20 +46,13 @@ export default function UserListScreen() {
                 <button style={styles.dashboard}>Dashboard</button>
             </Link>
             <h2>Users</h2>
-            <input
-                type="text"
-                placeholder="Search by email"
-                value={searchTerm}
-                onChange={handleSearch}
-                style={styles.searchBox}
-            />
             {error && <p style={styles.errorText}>{error}</p>}
             {loading ? (
                 <p>Loading...</p>
             ) : (
                 <div>
                     <ul style={styles.userList}>
-                        {filteredUsers.map(user => (
+                        {users.map(user => (
                             <li key={user.id} style={styles.userItem}>
                                 <div style={styles.userContainer}>
                                     <div style={styles.userInfo}>
