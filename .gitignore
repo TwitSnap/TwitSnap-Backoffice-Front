@@ -25,3 +25,6 @@ dist-ssr
 
 # Dolphin files
 .directory
+
+# Vite files
+.vite/
