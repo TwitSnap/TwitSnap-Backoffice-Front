@@ -8,6 +8,7 @@ export default function UserListScreen() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [expandedUser, setExpandedUser] = useState(null);
+    const usersPerPage = 10;
 
     useEffect(() => {
         fetchUsers(currentPage);
@@ -16,7 +17,25 @@ export default function UserListScreen() {
     const fetchUsers = async (page) => {
         setLoading(true);
         try {
-            const response = await fetch(`https://reqres.in/api/users?page=${page}`);
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token is missing");
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                //'Access-Control-Allow-Origin': '*',
+                'Authorization': `Bearer ${token}`
+            };
+
+            const offset = (page - 1) * usersPerPage;
+            const limit = usersPerPage;
+            const response = await fetch(
+                `https://twitsnap-backoffice-twitsnap-api.onrender.com/v1/ts/users?offset=${offset}&limit=${limit}`, {
+                    method: 'GET',
+                    headers: headers,
+                }
+            );
 
             const responseData = await response.json();
 
@@ -28,8 +47,9 @@ export default function UserListScreen() {
             }
 
             setError('');
-            setUsers(responseData.data);
-            setTotalPages(responseData.total_pages);
+            setUsers(responseData);
+            const total_users = 23;
+            setTotalPages(Math.ceil(total_users / usersPerPage));
         } catch (err) {
             setError(err.message);
         }
@@ -38,6 +58,46 @@ export default function UserListScreen() {
 
     const toggleUserDetails = (userId) => {
         setExpandedUser(prevState => prevState === userId ? null : userId);
+    };
+
+    const toggleUserBan = async (userId) => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token is missing");
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                //'Access-Control-Allow-Origin': '*',
+                'Authorization': `Bearer ${token}`
+            };
+
+            const response = await fetch(
+                `https://twitsnap-backoffice-twitsnap-api.onrender.com/v1/ts/users/${userId}/ban`, {
+                    method: 'POST',
+                    headers: headers,
+                }
+            );
+
+            if (!response.ok) {
+                console.log("Failed to ban/unban user.");
+                return;
+            }
+
+            console.log("User updated successfully.");
+            const updatedUsers = users.map(user => {
+                if (user.uid === userId) {
+                    const updatedUser = { ...user, is_banned: !user.is_banned };
+                    return updatedUser;
+                }
+                return user;
+            });
+
+            setUsers(updatedUsers);
+        } catch (err) {
+            setError(err.message);
+        }
     };
 
     return (
@@ -53,32 +113,38 @@ export default function UserListScreen() {
                 <div>
                     <ul style={styles.userList}>
                         {users.map(user => (
-                            <li key={user.id} style={styles.userItem}>
+                            <li key={user.uid} style={styles.userItem}>
                                 <div style={styles.userContainer}>
                                     <div style={styles.userInfo}>
-                                        <img src={user.avatar} style={styles.avatar}/>
+                                        <img src={user.photo} style={styles.avatar}/>
                                         <div style={{flexGrow: 1}}>
                                             <p>{user.email}</p>
                                         </div>
                                         <div style={styles.actions}>
                                             <button
                                                 style={styles.detailButton}
-                                                onClick={() => toggleUserDetails(user.id)}
+                                                onClick={() => toggleUserDetails(user.uid)}
                                             >
                                                 {expandedUser === user.id ? 'Hide Details' : 'Show Details'}
                                             </button>
                                             <button
-                                                style={styles.banButton}
-                                                onClick={() => {console.log("Banned user id: ", user.id)}}
+                                                style={user.is_banned ? styles.unbanButton : styles.banButton}
+                                                onClick={() => {
+                                                    toggleUserBan(user.uid);
+                                                }}
                                             >
-                                                Ban
+                                                {user.is_banned ? 'Unban' : 'Ban'}
                                             </button>
                                         </div>
                                     </div>
-                                    {expandedUser === user.id && (
+                                    {expandedUser === user.uid && (
                                         <div style={styles.details}>
-                                            <p><strong>Name: </strong> {user.first_name} {user.last_name}</p>
-                                            <p><strong>Country: </strong> Argentina</p>
+                                            <p><strong>Username: </strong> {user.username}</p>
+                                            <p><strong>Country: </strong> {user.country}</p>
+                                            <p><strong>Description: </strong>{user.description}</p>
+                                            <p><strong>Verified: </strong>{user.verified ? "True" : "False"}</p>
+                                            <p><strong>Follower count: </strong>{user.amount_of_followers}</p>
+                                            <p><strong>Following: </strong>{user.amount_of_following}</p>
                                         </div>
                                     )}
                                 </div>
@@ -165,6 +231,14 @@ const styles = {
     banButton: {
         padding: '5px 10px',
         backgroundColor: 'rgba(217,83,79,0.6)',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+    },
+    unbanButton: {
+        padding: '5px 10px',
+        backgroundColor: 'rgba(46,175,47,0.6)',
         color: '#fff',
         border: 'none',
         borderRadius: '5px',
