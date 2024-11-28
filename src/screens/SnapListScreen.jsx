@@ -1,6 +1,5 @@
 import {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
-import getSnaps from "../handlers/getSnaps.js";
 
 export default function SnapListScreen() {
     const [snaps, setSnaps] = useState([]);
@@ -8,34 +7,110 @@ export default function SnapListScreen() {
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [expandedSnap, setExpandedSnap] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const snapsPerPage = 10;
 
     useEffect(() => {
-        fetchData();
-    }, [])
+        fetchSnaps(currentPage);
+    }, [currentPage])
 
-    const fetchData = async () => {
+    const fetchSnaps = async (page) => {
         setLoading(true);
         try {
-            const res = await getSnaps();
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token is missing");
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                //'Access-Control-Allow-Origin': '*',
+                'Authorization': `Bearer ${token}`
+            };
+
+            const offset = (page - 1) * snapsPerPage;
+            const limit = snapsPerPage;
+            const endpoint = `https://twitsnap-backoffice-twitsnap-api.onrender.com/v1/ts/twits?offset=${offset}&limit=${limit}`;
+            if (searchTerm) {
+                endpoint.concat(`&userId=${searchTerm}`);
+            }
+
+            const response = await fetch(
+                endpoint, {
+                    method: 'GET',
+                    headers: headers,
+                }
+            );
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+                const message = responseData.error || "Unspecified error message.";
+                setError(message);
+                setLoading(false);
+                return;
+            }
+
+            console.log(responseData);
             setError('');
-            setSnaps(res.posts);
+            setSnaps(responseData);
+            const total_snaps = 23;
+            setTotalPages(Math.ceil(total_snaps / snapsPerPage));
         } catch (err) {
             setError(err.message);
-        } finally {
-            setLoading(false);
         }
+        setLoading(false);
     }
 
-    const filteredSnaps = snaps.filter((snap) =>
-        snap.username_creator.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     const handleSearch = (e) => {
-        setSearchTerm(e.target.value.toLowerCase());
+        e.preventDefault();
+        console.log(searchTerm);
+        fetchSnaps(currentPage);
     }
 
     const toggleSnapDetails = (snapId) => {
         setExpandedSnap(prevState => prevState === snapId ? null : snapId);
+    };
+
+    const toggleSnapBlock = async (postId) => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token is missing");
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                //'Access-Control-Allow-Origin': '*',
+                'Authorization': `Bearer ${token}`
+            };
+
+            const response = await fetch(
+                `https://twitsnap-backoffice-twitsnap-api.onrender.com/v1/ts/twits/${postId}/block`, {
+                    method: 'POST',
+                    headers: headers,
+                }
+            );
+
+            if (!response.ok) {
+                console.log("Failed to ban/unban user.");
+                return;
+            }
+
+            console.log("Snap updated successfully.");
+            const updatedSnaps = snaps.map(snap => {
+                if (snap.post_id === postId) {
+                    const updatedSnap = {...snap, is_blocked: !snap.is_blocked};
+                    return updatedSnap;
+                }
+                return snap;
+            });
+
+            setSnaps(updatedSnaps);
+        } catch (err) {
+            setError(err.message);
+        }
     };
 
     return (
@@ -44,20 +119,23 @@ export default function SnapListScreen() {
                 <button style={styles.dashboard}>Dashboard</button>
             </Link>
             <h2>Snaps</h2>
-            <input
-                type="text"
-                placeholder="Search by User"
-                value={searchTerm}
-                onChange={handleSearch}
-                style={styles.searchBox}
-            />
+            <form onSubmit={handleSearch} style={styles.form}>
+                <input
+                    type="text"
+                    placeholder="Search by User"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={styles.searchBox}
+                />
+                <button type="submit" style={styles.searchButton}>Search</button>
+            </form>
             {error && <p style={styles.errorText}>{error}</p>}
             {loading ? (
                 <p>Loading...</p>
             ) : (
                 <div>
                     <ul style={styles.snapList}>
-                        {filteredSnaps.map(snap => (
+                        {snaps.map(snap => (
                             <li key={snap.post_id} style={styles.snapItem}>
                                 <div style={styles.snapContainer}>
                                     <div style={styles.snapInfo}>
@@ -73,12 +151,12 @@ export default function SnapListScreen() {
                                                 {expandedSnap === snap.post_id ? 'Hide Details' : 'Show Details'}
                                             </button>
                                             <button
-                                                style={styles.banButton}
+                                                style={snap.is_blocked ? styles.unbanButton : styles.banButton}
                                                 onClick={() => {
-                                                    console.log("Blocked snap id: ", snap.post_id)
+                                                    toggleSnapBlock(snap.post_id);
                                                 }}
                                             >
-                                                Block
+                                                {snap.is_blocked ? 'Unblock' : 'Block'}
                                             </button>
                                         </div>
                                     </div>
@@ -86,8 +164,9 @@ export default function SnapListScreen() {
                                         <div style={styles.details}>
                                             <div style={styles.detailsLeft}>
                                                 <p><strong>Posted by:</strong> {snap.username_creator}</p>
+                                                <p><strong>Created at:</strong> {snap.created_at}</p>
                                                 <p><strong>Likes:</strong> {snap.like_ammount}</p>
-                                                <p><strong>Retweets:</strong> {snap.retwit_ammount}</p>
+                                                <p><strong>Retweets:</strong> {snap.retweet_ammount}</p>
                                                 <p><strong>Comments:</strong> {snap.comment_ammount}</p>
                                             </div>
                                             <div style={styles.detailsRight}>
@@ -95,6 +174,7 @@ export default function SnapListScreen() {
                                                 {snap.is_comment && (
                                                     <p><strong>Original Snap ID:</strong> {snap.origin_post}</p>
                                                 )}
+                                                <p><strong>Is Deleted:</strong> {snap.deleted ? 'Yes' : 'No'}</p>
                                             </div>
                                         </div>
                                     )}
@@ -103,6 +183,19 @@ export default function SnapListScreen() {
                         ))}
                     </ul>
 
+                    {/* Pagination */}
+                    <div style={styles.pagination}>
+                        {[...Array(totalPages)].map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setCurrentPage(index + 1)}
+                                disabled={currentPage === index + 1}
+                                style={styles.pageButton}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>
@@ -122,7 +215,16 @@ const styles = {
         left: 20,
     },
     errorText: {},
+    form: {
+        display: 'flex',
+        marginBottom: 'irem',
+    },
     searchBox: {
+        padding: '10px',
+        marginBottom: '20px',
+        fontSize: '16px',
+    },
+    searchButton: {
         padding: '10px',
         marginBottom: '20px',
         fontSize: '16px',
@@ -198,6 +300,14 @@ const styles = {
     banButton: {
         padding: '5px 10px',
         backgroundColor: 'rgba(217,83,79,0.6)',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+    },
+    unbanButton: {
+        padding: '5px 10px',
+        backgroundColor: 'rgba(46,175,47,0.6)',
         color: '#fff',
         border: 'none',
         borderRadius: '5px',
