@@ -5,9 +5,9 @@ export default function UserListScreen() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [expandedUser, setExpandedUser] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [expandedUser, setExpandedUser] = useState(null);
     const usersPerPage = 10;
 
     useEffect(() => {
@@ -17,15 +17,15 @@ export default function UserListScreen() {
     const fetchUsers = async (page) => {
         setLoading(true);
         try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                throw new Error("Token is missing");
-            }
+            //const token = localStorage.getItem("token");
+            //if (!token) {
+            //    throw new Error("Token is missing");
+            //}
 
             const headers = {
                 'Content-Type': 'application/json',
                 //'Access-Control-Allow-Origin': '*',
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmOGEwYzg4Yi04OWZiLTQ2NWQtOTNjNi03OTA2ODg0NDU4MDYiLCJpYXQiOjE3MzI4MjA4NzIsImV4cCI6MTczMjgyNDQ3Mn0.4m4nQ00JGVj7gdFtrrN6TruRBw6XE_g8dTIZ2AKsLDw`
             };
 
             const offset = (page - 1) * usersPerPage;
@@ -47,8 +47,8 @@ export default function UserListScreen() {
             }
 
             setError('');
-            setUsers(responseData);
-            const total_users = 23;
+            setUsers(responseData.users);
+            const total_users = responseData.total_users;
             setTotalPages(Math.ceil(total_users / usersPerPage));
         } catch (err) {
             setError(err.message);
