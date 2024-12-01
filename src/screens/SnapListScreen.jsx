@@ -54,8 +54,8 @@ export default function SnapListScreen() {
 
             console.log(responseData);
             setError('');
-            setSnaps(responseData);
-            const total_snaps = 23;
+            setSnaps(responseData.posts);
+            const total_snaps = responseData.total_posts;
             setTotalPages(Math.ceil(total_snaps / snapsPerPage));
         } catch (err) {
             setError(err.message);
