@@ -40,7 +40,6 @@ export default function MetricsScreen() {
                 return;
             }
 
-            console.log(responseData);
             setError('');
             setData(responseData)
         } catch (err) {
@@ -55,7 +54,7 @@ export default function MetricsScreen() {
             <Link to="/dashboard">
                 <button style={styles.dashboard}>Dashboard</button>
             </Link>
-            <h2>User Metrics</h2>
+            <h1 style={{fontSize: 30}}>User Metrics</h1>
             {error && <p style={styles.errorText}>{error}</p>}
             {loading && <p>Loading...</p>}
             {!loading && !error && (
@@ -64,13 +63,13 @@ export default function MetricsScreen() {
                     <p><strong>Banned Users: </strong>{data.bannedUsers.total}</p>
 
                     <div style={styles.section}>
-                        <h3>Registration Methods</h3>
+                        <h2 style={{fontSize: 24}}>Registration Methods</h2>
                         <p><strong>Email: </strong>{data.registration.distribution.email}</p>
                         <p><strong>Google: </strong>{data.registration.distribution.fedetatedIdentity?.google || 0}</p>
                     </div>
 
                     <div style={styles.section}>
-                        <h3>Country Distribution</h3>
+                        <h2 style={{fontSize: 24}}>Country Distribution</h2>
                         <ul style={styles.countryList}>
                             {Object.entries(data.countryDistribution).map(([country, count]) => (
                                 <li key={country}>

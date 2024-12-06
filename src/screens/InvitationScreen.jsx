@@ -36,7 +36,7 @@ export default function InvitationScreen() {
             <Link to="/dashboard">
                 <button style={styles.dashboard}>Dashboard</button>
             </Link>
-            <h2>Invite Admin</h2>
+            <h1 style={{fontSize: 30}}>Invite Admin</h1>
             <form onSubmit={handleSubmit}>
                 <div style={styles.inputContainer}>
                     <label>Email</label>

@@ -105,7 +105,7 @@ export default function UserListScreen() {
             <Link to="/dashboard">
                 <button style={styles.dashboard}>Dashboard</button>
             </Link>
-            <h2>Users</h2>
+            <h1 style={{fontSize: 30}}>Users</h1>
             {error && <p style={styles.errorText}>{error}</p>}
             {loading ? (
                 <p>Loading...</p>

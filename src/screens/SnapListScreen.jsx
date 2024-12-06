@@ -118,7 +118,7 @@ export default function SnapListScreen() {
             <Link to="/dashboard">
                 <button style={styles.dashboard}>Dashboard</button>
             </Link>
-            <h2>Snaps</h2>
+            <h1 style={{fontSize: 30}}>Snaps</h1>
             <form onSubmit={handleSearch} style={styles.form}>
                 <input
                     type="text"
