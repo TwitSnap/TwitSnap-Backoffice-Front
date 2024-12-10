@@ -13,14 +13,14 @@ export default function MetricsScreen() {
     const fetchMetrics = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem("token");
+            //const token = localStorage.getItem("token");
+            const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmOGEwYzg4Yi04OWZiLTQ2NWQtOTNjNi03OTA2ODg0NDU4MDYiLCJpYXQiOjE3MzM4NjM4NDgsImV4cCI6MTczMzg2NzQ0OH0.qonFZundAl2xh_YVVCTY775H-0-cv7TrsL78SiK_p34';
             if (!token) {
                 throw new Error("Token is missing");
             }
 
             const headers = {
                 'Content-Type': 'application/json',
-                //'Access-Control-Allow-Origin': '*',
                 'Authorization': `Bearer ${token}`
             };
 

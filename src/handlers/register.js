@@ -4,7 +4,7 @@ export default async function register(email, password, token) {
     try {
         const headers = {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            //'Access-Control-Allow-Origin': '*',
         };
         const requestBody = {
             email: email,

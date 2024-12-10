@@ -24,7 +24,6 @@ export default function UserListScreen() {
 
             const headers = {
                 'Content-Type': 'application/json',
-                //'Access-Control-Allow-Origin': '*',
                 'Authorization': `Bearer ${token}`
             };
 

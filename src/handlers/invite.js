@@ -9,7 +9,7 @@ export default async function invite(email) {
 
         const headers = {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            //'Access-Control-Allow-Origin': '*',
             'Authorization': `Bearer ${token}`
         };
 
