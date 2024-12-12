@@ -23,6 +23,9 @@ export default function DashboardScreen() {
                 <Link to="/metrics">
                     <button style={styles.button}>Metrics</button>
                 </Link>
+                <Link to="/services">
+                    <button style={styles.button}>Services</button>
+                </Link>
                 <Link to="/invite">
                     <button style={styles.button}>Invite</button>
                 </Link>
