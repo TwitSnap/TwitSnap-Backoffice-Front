@@ -3,9 +3,13 @@ import {Link} from "react-router-dom";
 import {API_URL} from "../constants.js";
 
 export default function ServicesScreen() {
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [formLoading, setFormLoading] = useState(false);
     const [error, setError] = useState('');
+    const [formError, setFormError] = useState('');
     const [expandedService, setExpandedService] = useState(null);
 
     useEffect(() => {
@@ -72,26 +76,105 @@ export default function ServicesScreen() {
         setServices(response.data);
     };
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!name) {
+            setError('Name are required.');
+            return;
+        }
+
+        setError('');
+        setFormLoading(true);
+        console.log('Creating service with', {name, description});
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token is missing");
+            }
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+            const requestBody = {
+                name: name,
+                description: description,
+            };
+
+            const response = await fetch(
+                `${API_URL}/v1/ts/service`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(requestBody),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to create service")
+            }
+
+            console.log("Service created successfully.");
+            console.log("Reload to see changes.");
+        } catch (err) {
+            setFormError(err.message);
+        } finally {
+            setFormLoading(false);
+        }
+    };
+
     const toggleSnapDetails = (serviceId) => {
         setExpandedService(prevState => prevState === serviceId ? null : serviceId);
     };
 
-    const toggleServiceBlock = async (serviceId) => {
-        const updateServices = services.map(service => {
-            if (service.id === serviceId) {
-                let newStatus;
-                if (service.status === "ACTIVE") {
-                    newStatus = "BLOCKED";
-                } else {
-                    newStatus = "ACTIVE";
-                }
-                const updatedService = { ...service, status: newStatus };
-                return updatedService;
+    const toggleServiceBlock = async (serviceId, prevStatus) => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Token is missing");
             }
-            return service;
-        });
 
-        setServices(updateServices);
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+            let newStatus;
+            if (prevStatus.status === "ACTIVE") {
+                newStatus = "BLOCKED";
+            } else {
+                newStatus = "ACTIVE";
+            }
+            const requestBody = {
+                id: serviceId,
+                status: newStatus,
+            };
+
+            const response = await fetch(
+                `${API_URL}/v1/ts/service/status`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(requestBody),
+                }
+            );
+
+            if (!response.ok) {
+                console.log("Failed to change status.");
+                return;
+            }
+
+            console.log("Service updated successfully.");
+            const updateServices = services.map(service => {
+                if (service.id === serviceId) {
+                    const updatedService = {...service, status: newStatus};
+                    return updatedService;
+                }
+                return service;
+            });
+
+            setServices(updateServices);
+        } catch (err) {
+            setError(err.message);
+        }
     };
 
     return (
@@ -104,6 +187,30 @@ export default function ServicesScreen() {
             {loading && <p>Loading...</p>}
             {!loading && !error && (
                 <>
+                    <form onSubmit={handleSubmit} style={styles.form}>
+                        <div style={styles.inputContainer}>
+                            <label>Service Name</label>
+                            <input
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                style={styles.input}
+                                required
+                            />
+                        </div>
+                        <div style={styles.inputContainer}>
+                            <label>Description</label>
+                            <input
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                style={styles.input}
+                            />
+                        </div>
+                        <button disabled={formLoading} type="submit" style={styles.button}>
+                            Create Service
+                        </button>
+                        {formError && <p style={styles.errorText}>{formError}</p>}
+                    </form>
+
                     <ul style={styles.serviceList}>
                         {services.map(service => (
                             <li key={service.id} style={styles.serviceItem}>
@@ -122,7 +229,7 @@ export default function ServicesScreen() {
                                             <button
                                                 style={(service.status === "BLOCKED") ? styles.unblockButton : styles.blockButton}
                                                 onClick={() => {
-                                                    toggleServiceBlock(service.id);
+                                                    toggleServiceBlock(service.id, service.status);
                                                 }}
                                             >
                                                 {(service.status === "BLOCKED") ? 'Enable' : 'Disable'}
@@ -159,6 +266,19 @@ const styles = {
     errorText: {
         color: 'red',
     },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '10px',
+        border: '1px solid #ddd',
+    },
+    inputContainer: {
+        marginBottom: '20px',
+    },
+    input: {
+        width: '100%',
+    },
+    button: {},
     serviceList: {
         listStyleType: 'none',
         padding: 0,
