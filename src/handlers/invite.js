@@ -1,4 +1,5 @@
 import ApiError from "../errors/ApiError.js";
+import {API_URL} from "../constants.js";
 
 export default async function invite(email) {
     try {
@@ -17,7 +18,7 @@ export default async function invite(email) {
             email: email,
         };
 
-        const response = await fetch('https://twitsnap-backoffice-gateway.onrender.com/v1/auth/invitation',{
+        const response = await fetch(API_URL + '/v1/auth/invitation',{
             method: 'POST',
             headers: headers,
             body: JSON.stringify(requestBody),

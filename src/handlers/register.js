@@ -1,4 +1,5 @@
 import ApiError from "../errors/ApiError.js";
+import {API_URL} from "../constants.js";
 
 export default async function register(email, password, token) {
     try {
@@ -12,7 +13,7 @@ export default async function register(email, password, token) {
             token: token,
         };
 
-        const response = await fetch('https://twitsnap-backoffice-gateway.onrender.com/v1/auth/register', {
+        const response = await fetch(API_URL + '/v1/auth/register', {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(requestBody),

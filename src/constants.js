@@ -1,0 +1,1 @@
+export const API_URL = `https://twitsnap-backoffice-gateway.onrender.com`;

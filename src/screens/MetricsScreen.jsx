@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {Link} from 'react-router-dom';
+import {API_URL} from "../constants.js";
 
 export default function MetricsScreen() {
     const [loading, setLoading] = useState(true);
@@ -24,7 +25,7 @@ export default function MetricsScreen() {
             };
 
             const response = await fetch(
-                `https://twitsnap-backoffice-twitsnap-api.onrender.com/v1/ts/users/metrics`, {
+                `${API_URL}/v1/ts/users/metrics`, {
                     method: 'GET',
                     headers: headers,
                 }

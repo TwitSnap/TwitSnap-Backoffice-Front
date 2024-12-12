@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
+import {API_URL} from "../constants.js";
 
 export default function SnapListScreen() {
     const [snaps, setSnaps] = useState([]);
@@ -30,7 +31,7 @@ export default function SnapListScreen() {
 
             const offset = (page - 1) * snapsPerPage;
             const limit = snapsPerPage;
-            const endpoint = `https://twitsnap-backoffice-twitsnap-api.onrender.com/v1/ts/twits?offset=${offset}&limit=${limit}`;
+            const endpoint = `${API_URL}/v1/ts/twits?offset=${offset}&limit=${limit}`;
             if (searchTerm) {
                 endpoint.concat(`&userId=${searchTerm}`);
             }
@@ -86,7 +87,7 @@ export default function SnapListScreen() {
             };
 
             const response = await fetch(
-                `https://twitsnap-backoffice-twitsnap-api.onrender.com/v1/ts/twits/${postId}/block`, {
+                `${API_URL}/v1/ts/twits/${postId}/block`, {
                     method: 'POST',
                     headers: headers,
                 }

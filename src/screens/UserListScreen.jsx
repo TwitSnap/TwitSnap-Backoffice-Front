@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
+import {API_URL} from "../constants.js";
 
 export default function UserListScreen() {
     const [users, setUsers] = useState([]);
@@ -30,7 +31,7 @@ export default function UserListScreen() {
             const offset = (page - 1) * usersPerPage;
             const limit = usersPerPage;
             const response = await fetch(
-                `https://twitsnap-backoffice-twitsnap-api.onrender.com/v1/ts/users?offset=${offset}&limit=${limit}`, {
+                `${API_URL}/v1/ts/users?offset=${offset}&limit=${limit}`, {
                     method: 'GET',
                     headers: headers,
                 }
@@ -73,7 +74,7 @@ export default function UserListScreen() {
             };
 
             const response = await fetch(
-                `https://twitsnap-backoffice-twitsnap-api.onrender.com/v1/ts/users/${userId}/ban`, {
+                `${API_URL}/v1/ts/users/${userId}/ban`, {
                     method: 'POST',
                     headers: headers,
                 }

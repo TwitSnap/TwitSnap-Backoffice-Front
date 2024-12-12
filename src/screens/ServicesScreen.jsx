@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
+import {API_URL} from "../constants.js";
 
 export default function ServicesScreen() {
     const [services, setServices] = useState([]);
@@ -25,7 +26,7 @@ export default function ServicesScreen() {
             };
 
             const response = await fetch(
-                `https://twitsnap-backoffice-gateway.onrender.com/v1/ts/service`, {
+                `${API_URL}/v1/ts/service`, {
                     method: 'GET',
                     headers: headers,
                 }
