@@ -25,7 +25,7 @@ export default function ServicesScreen() {
             };
 
             const response = await fetch(
-                `https://twitsnap-apps-gateway.onrender.com/v1/registry/service`, {
+                `https://twitsnap-backoffice-gateway.onrender.com/v1/registry/service`, {
                     method: 'GET',
                     headers: headers,
                 }
