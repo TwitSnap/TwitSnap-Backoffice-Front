@@ -52,7 +52,6 @@ export default function SnapListScreen() {
                 return;
             }
 
-            console.log(responseData);
             setError('');
             setSnaps(responseData.posts);
             const total_snaps = responseData.total_posts;

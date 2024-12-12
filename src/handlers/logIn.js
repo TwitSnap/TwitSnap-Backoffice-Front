@@ -21,11 +21,10 @@ export default async function logIn(email, password) {
         const responseData = await response.json();
 
         if (response.ok) {
-            console.log("Successfully logged in");
             const token = responseData.token;
             if (token) {
+                console.log("Successfully logged in");
                 localStorage.setItem('token', token);
-                console.log("   token saved: ", token);
             }
         } else if (response.status >= 400 && response.status < 500) {
             const message = responseData.title || "Unspecified error message.";
