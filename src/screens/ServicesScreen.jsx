@@ -47,7 +47,7 @@ export default function ServicesScreen() {
 
             console.log(responseData);
             setError('');
-            setServices(responseData.data);
+            setServices(responseData);
         } catch(err) {
             setError(err.message);
         } finally {
