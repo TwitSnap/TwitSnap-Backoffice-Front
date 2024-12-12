@@ -55,27 +55,6 @@ export default function ServicesScreen() {
         }
     };
 
-    const fetchData = async () => {
-        const response = {
-            data: [
-                {
-                    "name": "Users",
-                    "id": "01",
-                    "description": "User API service",
-                    "status": "ACTIVE",
-                },
-                {
-                    "name": "Snaps",
-                    "id": "02",
-                    "description": "Snap API service",
-                    "status": "BLOCKED",
-                },
-            ],
-        };
-
-        setServices(response.data);
-    };
-
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -139,6 +118,7 @@ export default function ServicesScreen() {
                 'Authorization': `Bearer ${token}`
             };
             let newStatus;
+            console.log(newStatus);
             if (prevStatus.status === "ACTIVE") {
                 newStatus = "BLOCKED";
             } else {
@@ -239,6 +219,9 @@ export default function ServicesScreen() {
                                     {expandedService === service.id && (
                                         <div style={styles.details}>
                                             <p><strong>Description: </strong>{service.description}</p>
+                                            <p><strong>Creación: </strong>{service.creation_date}</p>
+                                            <p><strong>API Key: </strong>{service.api_key}</p>
+                                            <p><strong></strong></p>
                                         </div>
                                     )}
                                 </div>
