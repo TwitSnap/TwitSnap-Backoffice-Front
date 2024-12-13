@@ -119,7 +119,7 @@ export default function ServicesScreen() {
             };
 
             let newStatus;
-            if (prevStatus.status === "ACTIVE") {
+            if (prevStatus === "ACTIVE") {
                 newStatus = "BLOCKED";
             } else {
                 newStatus = "ACTIVE";
