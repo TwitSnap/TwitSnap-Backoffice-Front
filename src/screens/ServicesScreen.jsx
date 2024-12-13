@@ -117,13 +117,14 @@ export default function ServicesScreen() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             };
+
             let newStatus;
-            console.log(newStatus);
             if (prevStatus.status === "ACTIVE") {
                 newStatus = "BLOCKED";
             } else {
                 newStatus = "ACTIVE";
             }
+            console.log("Changing status to ", newStatus);
             const requestBody = {
                 id: serviceId,
                 status: newStatus,
