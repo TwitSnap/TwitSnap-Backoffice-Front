@@ -6,11 +6,16 @@ export default function ServicesScreen() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [services, setServices] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
     const [formLoading, setFormLoading] = useState(false);
     const [error, setError] = useState('');
     const [formError, setFormError] = useState('');
     const [expandedService, setExpandedService] = useState(null);
+
+    const filteredServices = services.filter((service) =>
+        service.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     useEffect(() => {
         fetchServices();
@@ -44,8 +49,7 @@ export default function ServicesScreen() {
                 setLoading(false);
                 return;
             }
-
-            console.log(responseData);
+            
             setError('');
             setServices(responseData);
         } catch(err) {
@@ -100,6 +104,10 @@ export default function ServicesScreen() {
         } finally {
             setFormLoading(false);
         }
+    };
+
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value.toLowerCase());
     };
 
     const toggleSnapDetails = (serviceId) => {
@@ -192,8 +200,16 @@ export default function ServicesScreen() {
                         {formError && <p style={styles.errorText}>{formError}</p>}
                     </form>
 
+                    <input
+                        type="text"
+                        placeholder="Search by name"
+                        value={searchTerm}
+                        onChange={handleSearch}
+                        style={styles.searchBox}
+                    />
+
                     <ul style={styles.serviceList}>
-                        {services.map(service => (
+                        {filteredServices.map(service => (
                             <li key={service.id} style={styles.serviceItem}>
                                 <div style={styles.serviceContainer}>
                                     <div style={styles.serviceInfo}>
@@ -261,6 +277,12 @@ const styles = {
     },
     input: {
         width: '100%',
+    },
+    searchBox: {
+        padding: '10px',
+        /*width: '100%',*/
+        marginBottom: '20px',
+        fontSize: '16px',
     },
     button: {},
     serviceList: {
