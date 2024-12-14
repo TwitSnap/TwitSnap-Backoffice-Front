@@ -49,7 +49,7 @@ export default function ServicesScreen() {
                 setLoading(false);
                 return;
             }
-            
+
             setError('');
             setServices(responseData);
         } catch(err) {
@@ -281,6 +281,7 @@ const styles = {
     searchBox: {
         padding: '10px',
         /*width: '100%',*/
+        marginTop: '20px',
         marginBottom: '20px',
         fontSize: '16px',
     },
